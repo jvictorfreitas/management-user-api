@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: jsonapi_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/seeds:/docker-entrypoint-initdb.d
+
+  api:
+    build:
+      context: ./management-user
+      dockerfile: Dockerfile
+    container_name: jsonapi_api
+    depends_on:
+      - postgres
+    environment:
+      ConnectionStrings__Default: Host=postgres;Port=5432;Database=appdb;Username=app;Password=app
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:

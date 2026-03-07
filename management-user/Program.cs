@@ -1,4 +1,6 @@
+using infrastructure.database;
 using management.user;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,10 @@ builder.Services.AddOpenApiDocument(options =>
     options.Version = "v1";
     options.Description = "Documentação da API";
 });
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Default"))
+);
 
 var app = builder.Build();
 
