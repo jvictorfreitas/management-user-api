@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using shared.jsonapi;
 
 namespace feature.user;
 
@@ -6,16 +7,28 @@ public static class UpdateUserEndpoint
 {
     public static void MapUpdateUserEndpoint(this WebApplication app)
     {
-        app.MapPut(
+        app.MapPatch(
                 "/v1/users/{id:guid}",
                 async (
                     UpdateUserHandler handler,
-                    [FromRoute] Guid id,
-                    [FromBody] UpdateUserRequest request
+                    Guid id,
+                    JsonApiRequest<UpdateUserRequest> request
                 ) =>
                 {
-                    UpdateUserResponse result = await handler.Handle(id, request);
-                    return Results.Ok(result);
+                    if (request.Data.Id != id.ToString())
+                    {
+                        return JsonApiErrorResults.BadRequest(
+                            "Invalid resource id",
+                            "Body id must match route id"
+                        );
+                    }
+
+                    (string id, UpdateUserResponse response) result = await handler.Handle(
+                        id,
+                        request.Data.Attributes
+                    );
+
+                    return JsonApiResults.Ok("users", result.id, result.response);
                 }
             )
             .WithName("UpdateUser")

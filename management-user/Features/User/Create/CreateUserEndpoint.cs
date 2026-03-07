@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+using shared.jsonapi;
 
 namespace feature.user;
 
@@ -8,10 +8,18 @@ public static class CreateUserEndpoint
     {
         app.MapPost(
                 "/v1/users",
-                async (CreateUserHandler handler, [FromBody] CreateUserRequest request) =>
+                async (CreateUserHandler handler, CreateUserRequest request) =>
                 {
-                    CreateUserResponse result = await handler.Handle(request);
-                    return Results.Ok(result);
+                    (string id, CreateUserResponse attributes) result = await handler.Handle(
+                        request
+                    );
+
+                    return JsonApiResults.Created(
+                        "users",
+                        result.id,
+                        result.attributes,
+                        $"/v1/users/{result.id}"
+                    );
                 }
             )
             .WithName("CreateUser")

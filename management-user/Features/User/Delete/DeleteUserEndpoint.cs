@@ -8,9 +8,18 @@ public static class DeleteUserEndpoint
     {
         app.MapDelete(
                 "/v1/users/{id}",
-                async (DeleteUserHandler handler, [FromRoute] Guid id) =>
+                async (DeleteUserHandler handler, Guid id) =>
                 {
-                    await handler.Handle(id);
+                    bool deleted = await handler.Handle(id);
+
+                    if (!deleted)
+                    {
+                        return JsonApiErrorResults.BadRequest(
+                            "Resource not found",
+                            $"User with id '{id}' was not found"
+                        );
+                    }
+
                     return Results.NoContent();
                 }
             )

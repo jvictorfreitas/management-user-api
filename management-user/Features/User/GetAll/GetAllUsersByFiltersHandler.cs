@@ -2,14 +2,20 @@ namespace feature.user;
 
 public class GetAllUsersByFiltersHandler
 {
-    public async Task<IEnumerable<GetAllUsersByFiltersResponse>> Handle(
+    public async Task<IEnumerable<(string id, GetAllUsersByFiltersResponse attributes)>> Handle(
         GetAllUsersByFiltersRequest request
     )
     {
         await Task.Delay(100);
-        return new List<GetAllUsersByFiltersResponse>
+        return new List<(string, GetAllUsersByFiltersResponse)>
         {
-            new GetAllUsersByFiltersResponse(Guid.NewGuid(), request.Name, request.Email),
+            (
+                Guid.NewGuid().ToString(),
+                new GetAllUsersByFiltersResponse(
+                    request.Name ?? "João",
+                    request.Email ?? "joao@email.com"
+                )
+            ),
         };
     }
 }

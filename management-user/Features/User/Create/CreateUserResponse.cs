@@ -1,3 +1,3 @@
 namespace feature.user;
 
-public record CreateUserResponse(Guid Id, string Name, string Email);
+public record CreateUserResponse(string Name, string Email);
