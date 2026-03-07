@@ -19,6 +19,8 @@ builder.Services.AddOpenApiDocument(options =>
 
 var app = builder.Build();
 
+app.UseMiddleware<JsonApiExceptionMiddleware>();
+
 app.ConfigureRoutes();
 
 app.UseOpenApi(); // gera /swagger/v1/swagger.json
