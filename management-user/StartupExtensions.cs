@@ -10,6 +10,7 @@ public static class StartupExtensions
         services.AddScoped<DeleteUserHandler>();
         services.AddScoped<GetAllUsersByFiltersHandler>();
         services.AddScoped<GetUserByIdHandler>();
+        services.AddScoped<UpdateUserHandler>();
         return services;
     }
 
@@ -27,5 +28,6 @@ public static class StartupExtensions
         DeleteUserEndpoint.MapDeleteUserEndpoint(app);
         GetAllUsersByFiltersEndPoint.MapGetAllUsersByFiltersEndpoint(app);
         GetUserByIdEndpoint.MapGetUserByIdEndpoint(app);
+        UpdateUserEndpoint.MapUpdateUserEndpoint(app);
     }
 }
