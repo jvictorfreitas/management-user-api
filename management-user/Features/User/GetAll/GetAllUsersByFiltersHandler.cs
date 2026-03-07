@@ -9,12 +9,7 @@ public class GetAllUsersByFiltersHandler
         await Task.Delay(100);
         return new List<GetAllUsersByFiltersResponse>
         {
-            new GetAllUsersByFiltersResponse
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                Email = request.Email,
-            },
+            new GetAllUsersByFiltersResponse(Guid.NewGuid(), request.Name, request.Email),
         };
     }
 }

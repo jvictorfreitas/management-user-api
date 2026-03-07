@@ -1,8 +1,3 @@
 namespace feature.user;
 
-public record CreateUserResponse
-{
-    public Guid Id { get; init; }
-    public string Name { get; init; }
-    public string Email { get; init; }
-}
+public record CreateUserResponse(Guid Id, string Name, string Email);
