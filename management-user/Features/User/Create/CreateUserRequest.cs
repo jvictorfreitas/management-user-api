@@ -1,7 +1,3 @@
 namespace feature.user;
 
-public record CreateUserRequest
-{
-    public string Name { get; init; }
-    public string Email { get; init; }
-}
+public record CreateUserRequest(string Name, string Email);

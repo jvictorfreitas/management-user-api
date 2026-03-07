@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-
 namespace feature.user;
 
-public record GetAllUsersByFiltersRequest([FromQuery] string Name, [FromQuery] string Email);
+public record GetAllUsersByFiltersRequest(string? Name, string? Email, int? Page, int? PageSize);

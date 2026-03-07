@@ -6,7 +6,10 @@ public static class GetAllUsersByFiltersEndPoint
     {
         app.MapGet(
                 "/v1/users",
-                async (GetAllUsersByFiltersRequest request, GetAllUsersByFiltersHandler handler) =>
+                async (
+                    [AsParameters] GetAllUsersByFiltersRequest request,
+                    GetAllUsersByFiltersHandler handler
+                ) =>
                 {
                     IEnumerable<GetAllUsersByFiltersResponse> result = await handler.Handle(
                         request
