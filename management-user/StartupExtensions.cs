@@ -1,15 +1,14 @@
-﻿using feature.User;
+﻿using feature.user;
 
 namespace management.user;
 
 public static class StartupExtensions
 {
-    public static IServiceCollection AddHandlers(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static IServiceCollection AddHandlers(this IServiceCollection services)
     {
         services.AddScoped<CreateUserHandler>();
+        services.AddScoped<DeleteUserHandler>();
+        services.AddScoped<GetAllUsersByFiltersHandler>();
         return services;
     }
 
@@ -24,5 +23,7 @@ public static class StartupExtensions
     public static void ConfigureRoutes(this WebApplication app)
     {
         CreateUserEndpoint.MapCreateUserEndpoint(app);
+        DeleteUserEndpoint.MapDeleteUserEndpoint(app);
+        GetAllUsersByFiltersEndPoint.MapGetAllUsersByFiltersEndpoint(app);
     }
 }
