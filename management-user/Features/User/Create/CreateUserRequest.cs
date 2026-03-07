@@ -1,4 +1,4 @@
-namespace feature.User;
+namespace feature.user;
 
 public record CreateUserRequest
 {

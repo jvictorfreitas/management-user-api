@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace feature.User;
+namespace feature.user;
 
 public static class CreateUserEndpoint
 {
