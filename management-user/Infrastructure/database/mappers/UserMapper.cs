@@ -1,6 +1,6 @@
 ﻿using domain;
 
-namespace Infraestructure.database;
+namespace Infrastructure.database;
 
 public static class UserMapper
 {

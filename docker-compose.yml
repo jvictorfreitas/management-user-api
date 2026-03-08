@@ -4,7 +4,7 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: jsonapi_postgres
+    container_name: postgres
     restart: always
     environment:
       POSTGRES_USER: app
@@ -20,7 +20,7 @@ services:
     build:
       context: ./management-user
       dockerfile: Dockerfile
-    container_name: jsonapi_api
+    container_name: api
     depends_on:
       - postgres
     environment:

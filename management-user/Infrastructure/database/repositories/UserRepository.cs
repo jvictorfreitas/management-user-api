@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Shared;
 
-namespace Infraestructure.database;
+namespace Infrastructure.database;
 
 public class UserRepository : IUserRepository
 {

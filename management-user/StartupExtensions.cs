@@ -1,5 +1,5 @@
 ﻿using feature.user;
-using Infraestructure.database;
+using Infrastructure.database;
 using Shared;
 
 namespace management.user;

@@ -1,4 +1,4 @@
-using Infraestructure.database;
+using Infrastructure.database;
 using management.user;
 using Microsoft.EntityFrameworkCore;
 

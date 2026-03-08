@@ -9,23 +9,11 @@ public static class UpdateUserEndpoint
     {
         app.MapPatch(
                 "/v1/users/{id:guid}",
-                async (
-                    UpdateUserHandler handler,
-                    Guid id,
-                    JsonApiRequest<UpdateUserRequest> request
-                ) =>
+                async (UpdateUserHandler handler, Guid id, UpdateUserRequest request) =>
                 {
-                    if (request.Data.Id != id.ToString())
-                    {
-                        return JsonApiErrorResults.BadRequest(
-                            "Invalid resource id",
-                            "Body id must match route id"
-                        );
-                    }
-
                     (string id, UpdateUserResponse response) result = await handler.Handle(
                         id,
-                        request.Data.Attributes
+                        request
                     );
 
                     return JsonApiResults.Ok("users", result.id, result.response);

@@ -1,4 +1,4 @@
-﻿namespace Infraestructure.database;
+﻿namespace Infrastructure.database;
 
 public class UserEntity
 {

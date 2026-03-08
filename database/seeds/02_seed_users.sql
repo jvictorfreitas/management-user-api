@@ -1,5 +1,12 @@
-INSERT INTO users (id, name, email)
+INSERT INTO users
+(
+    "GuidId",
+    "Name",
+    "Cpf",
+    "AccountStatus",
+    "created_at"
+)
 VALUES
-('11111111-1111-1111-1111-111111111111', 'Alice', 'alice@email.com'),
-('22222222-2222-2222-2222-222222222222', 'Bob', 'bob@email.com'),
-('33333333-3333-3333-3333-333333333333', 'Charlie', 'charlie@email.com');
+(gen_random_uuid(), 'João Silva', '12345678900', 1, NOW()),
+(gen_random_uuid(), 'Maria Souza', '98765432100', 1, NOW()),
+(gen_random_uuid(), 'Pedro Santos', '45678912300', 0, NOW());
