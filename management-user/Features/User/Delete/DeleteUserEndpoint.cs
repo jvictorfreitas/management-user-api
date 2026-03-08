@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+using Shared;
 
 namespace feature.user;
 
@@ -10,9 +10,12 @@ public static class DeleteUserEndpoint
                 "/v1/users/{id}",
                 async (DeleteUserHandler handler, Guid id) =>
                 {
-                    bool deleted = await handler.Handle(id);
+                    Result<bool> result = await handler.Handle(id);
 
-                    if (!deleted)
+                    if (!result.IsSuccess)
+                        return Results.Problem(statusCode: 500, title: result.Errors.First().Title);
+
+                    if (!result.Value)
                     {
                         return JsonApiErrorResults.BadRequest(
                             "Resource not found",

@@ -12,17 +12,33 @@ public class UpdateUserHandler
         _userRepository = userRepository;
     }
 
-    public async Task<(string id, UpdateUserResponse response)> Handle(
+    public async Task<Result<(string id, UpdateUserResponse response)>> Handle(
         Guid id,
         UpdateUserRequest request
     )
     {
-        User user = new User(id, request.Name, request.Cpf);
+        try
+        {
+            User user = new User(id, request.Name, request.Cpf);
 
-        user = await _userRepository.Update(user);
+            user = await _userRepository.Update(user);
 
-        UpdateUserResponse response = new(user.Name, user.Cpf);
+            UpdateUserResponse response = new(user.Name, user.Cpf);
 
-        return (user.Id.ToString(), response);
+            return Result<(string id, UpdateUserResponse response)>.Success(
+                (user.Id.ToString(), response)
+            );
+        }
+        catch (Exception)
+        {
+            return Result<(string, UpdateUserResponse)>.Failure([
+                new JsonApiError
+                {
+                    Status = "500",
+                    Title = "Internal Server Error",
+                    Detail = "An unexpected error occurred while processing the request",
+                },
+            ]);
+        }
     }
 }

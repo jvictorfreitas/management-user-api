@@ -1,3 +1,5 @@
+namespace Shared;
+
 public class JsonApiError
 {
     public string Status { get; init; } = default!;

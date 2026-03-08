@@ -12,14 +12,30 @@ public class CreateUserHandler
         _userRepository = userRepository;
     }
 
-    public async Task<(string id, CreateUserResponse response)> Handle(CreateUserRequest request)
+    public async Task<Result<(string id, CreateUserResponse response)>> Handle(
+        CreateUserRequest request
+    )
     {
-        User user = new User(Guid.NewGuid(), request.Name, request.Cpf, AccountStatus.Active);
+        try
+        {
+            User user = new User(Guid.NewGuid(), request.Name, request.Cpf, AccountStatus.Active);
 
-        user = await _userRepository.Add(user);
+            user = await _userRepository.Add(user);
 
-        CreateUserResponse response = new CreateUserResponse(request.Name, request.Cpf);
+            CreateUserResponse response = new CreateUserResponse(user.Name, user.Cpf);
 
-        return (user.Id.ToString(), response);
+            return Result<(string, CreateUserResponse)>.Success((user.Id.ToString(), response));
+        }
+        catch (Exception)
+        {
+            return Result<(string, CreateUserResponse)>.Failure([
+                new JsonApiError
+                {
+                    Status = "500",
+                    Title = "Internal Server Error",
+                    Detail = "An unexpected error occurred while processing the request",
+                },
+            ]);
+        }
     }
 }

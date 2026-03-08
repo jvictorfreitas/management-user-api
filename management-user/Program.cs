@@ -1,6 +1,8 @@
+using feature.user;
 using Infrastructure.database;
 using management.user;
 using Microsoft.EntityFrameworkCore;
+using Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddHandlers();
 
-builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddInfrastructureServices();
 
 builder.Services.AddOpenApiDocument(options =>
 {
@@ -22,6 +24,8 @@ builder.Services.AddOpenApiDocument(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"))
 );
+
+builder.Services.ConfigureValidations();
 
 var app = builder.Build();
 

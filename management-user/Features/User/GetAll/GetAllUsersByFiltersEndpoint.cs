@@ -1,4 +1,4 @@
-using shared.jsonapi;
+using Shared;
 
 namespace feature.user;
 
@@ -13,9 +13,12 @@ public static class GetAllUsersByFiltersEndPoint
                     GetAllUsersByFiltersHandler handler
                 ) =>
                 {
-                    IEnumerable<(string id, GetAllUsersByFiltersResponse attributes)> result =
-                        await handler.Handle(request);
-                    return JsonApiResults.OkCollection("users", result);
+                    var result = await handler.Handle(request);
+
+                    if (!result.IsSuccess)
+                        return Results.Problem(statusCode: 500, title: result.Errors.First().Title);
+
+                    return JsonApiResults.OkCollection("users", result.Value);
                 }
             )
             .WithName("GetAllUsersByFilters")

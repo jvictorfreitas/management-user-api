@@ -12,18 +12,34 @@ public class GetAllUsersByFiltersHandler
         _userRepository = userRepository;
     }
 
-    public async Task<IEnumerable<(string id, GetAllUsersByFiltersResponse attributes)>> Handle(
-        GetAllUsersByFiltersRequest request
-    )
+    public async Task<
+        Result<IEnumerable<(string id, GetAllUsersByFiltersResponse attributes)>>
+    > Handle(GetAllUsersByFiltersRequest request)
     {
-        List<User> users = await _userRepository.GetAllByFilter(
-            request.Name,
-            request.Cpf,
-            request.Page,
-            request.PageSize
-        );
+        try
+        {
+            List<User> users = await _userRepository.GetAllByFilter(
+                request.Name,
+                request.Cpf,
+                request.Page,
+                request.PageSize
+            );
 
-        return ToResponseList(users);
+            return Result<
+                IEnumerable<(string id, GetAllUsersByFiltersResponse attributes)>
+            >.Success(ToResponseList(users));
+        }
+        catch (Exception)
+        {
+            return Result<IEnumerable<(string, GetAllUsersByFiltersResponse)>>.Failure([
+                new JsonApiError
+                {
+                    Status = "500",
+                    Title = "Internal Server Error",
+                    Detail = "An unexpected error occurred while processing the request",
+                },
+            ]);
+        }
     }
 
     private List<(string id, GetAllUsersByFiltersResponse attributes)> ToResponseList(

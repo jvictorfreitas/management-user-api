@@ -1,3 +1,5 @@
+namespace Shared;
+
 public class JsonApiExceptionMiddleware
 {
     private readonly RequestDelegate _next;

@@ -12,10 +12,26 @@ public class GetUserByIdHandler
         _userRepository = userRepository;
     }
 
-    public async Task<(string id, GetUserByIdResponse response)> Handle(Guid id)
+    public async Task<Result<(string id, GetUserByIdResponse response)>> Handle(Guid id)
     {
-        User user = await _userRepository.GetById(id);
+        try
+        {
+            User user = await _userRepository.GetById(id);
 
-        return (user.Id.ToString(), new GetUserByIdResponse(user.Name, user.Cpf));
+            return Result<(string, GetUserByIdResponse)>.Success(
+                (user.Id.ToString(), new GetUserByIdResponse(user.Name, user.Cpf))
+            );
+        }
+        catch (Exception ex)
+        {
+            return Result<(string, GetUserByIdResponse)>.Failure([
+                new JsonApiError
+                {
+                    Status = "500",
+                    Title = "Internal Server Error",
+                    Detail = "An unexpected error occurred while processing the request",
+                },
+            ]);
+        }
     }
 }

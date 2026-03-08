@@ -1,4 +1,4 @@
-using shared.jsonapi;
+using Shared;
 
 namespace feature.user;
 
@@ -8,18 +8,27 @@ public static class CreateUserEndpoint
     {
         app.MapPost(
                 "/v1/users",
-                async (CreateUserHandler handler, CreateUserRequest request) =>
+                async (
+                    CreateUserHandler handler,
+                    CreateUserValidator validator,
+                    CreateUserRequest request
+                ) =>
                 {
-                    (string id, CreateUserResponse attributes) result = await handler.Handle(
-                        request
-                    );
+                    ValidationResult validation = validator.Validate(request);
 
-                    return JsonApiResults.Created(
-                        "users",
-                        result.id,
-                        result.attributes,
-                        $"/v1/users/{result.id}"
-                    );
+                    if (!validation.IsValid)
+                    {
+                        return Results.BadRequest(
+                            ValidationErrorMapper.ToJsonApiErrors(validation)
+                        );
+                    }
+
+                    var result = await handler.Handle(request);
+
+                    if (!result.IsSuccess)
+                        return Results.Problem(statusCode: 500, title: result.Errors.First().Title);
+
+                    return JsonApiResults.Created("users", result.Value.id, result.Value.response);
                 }
             )
             .WithName("CreateUser")

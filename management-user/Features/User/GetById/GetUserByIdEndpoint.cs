@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using shared.jsonapi;
+using Shared;
 
 namespace feature.user;
 
@@ -11,8 +11,12 @@ public static class GetUserByIdEndpoint
                 "/users/{id}",
                 async (GetUserByIdHandler handler, [FromRoute] Guid id) =>
                 {
-                    (string id, GetUserByIdResponse response) result = await handler.Handle(id);
-                    return JsonApiResults.Ok("users", result.id, result.response);
+                    var result = await handler.Handle(id);
+
+                    if (!result.IsSuccess)
+                        return Results.Problem(statusCode: 500, title: result.Errors.First().Title);
+
+                    return JsonApiResults.Ok("users", result.Value.id, result.Value.response);
                 }
             )
             .WithName("GetUserById")

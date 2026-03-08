@@ -1,4 +1,4 @@
-namespace shared.jsonapi;
+namespace Shared;
 
 public static class JsonApiResults
 {
@@ -13,7 +13,7 @@ public static class JsonApiResults
         );
     }
 
-    public static IResult Created<T>(string type, string id, T attributes, string location)
+    public static IResult Created<T>(string type, string id, T attributes)
     {
         var response = JsonApiMapper.ToResponse(type, id, attributes);
 

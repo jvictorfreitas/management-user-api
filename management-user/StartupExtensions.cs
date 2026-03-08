@@ -16,10 +16,7 @@ public static class StartupExtensions
         return services;
     }
 
-    public static IServiceCollection AddInfrastructureServices(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
         return services;
@@ -32,5 +29,11 @@ public static class StartupExtensions
         GetAllUsersByFiltersEndPoint.MapGetAllUsersByFiltersEndpoint(app);
         GetUserByIdEndpoint.MapGetUserByIdEndpoint(app);
         UpdateUserEndpoint.MapUpdateUserEndpoint(app);
+    }
+
+    public static void ConfigureValidations(this IServiceCollection services)
+    {
+        services.AddScoped<CreateUserValidator>();
+        services.AddScoped<UpdateUserValidator>();
     }
 }

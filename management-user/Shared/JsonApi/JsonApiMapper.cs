@@ -1,4 +1,4 @@
-namespace shared.jsonapi;
+namespace Shared;
 
 public static class JsonApiMapper
 {

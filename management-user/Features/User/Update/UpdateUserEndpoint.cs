@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
-using shared.jsonapi;
+using Shared;
 
 namespace feature.user;
 
@@ -9,14 +8,28 @@ public static class UpdateUserEndpoint
     {
         app.MapPatch(
                 "/v1/users/{id:guid}",
-                async (UpdateUserHandler handler, Guid id, UpdateUserRequest request) =>
+                async (
+                    UpdateUserHandler handler,
+                    UpdateUserValidator validator,
+                    Guid id,
+                    UpdateUserRequest request
+                ) =>
                 {
-                    (string id, UpdateUserResponse response) result = await handler.Handle(
-                        id,
-                        request
-                    );
+                    ValidationResult validation = validator.Validate(request);
 
-                    return JsonApiResults.Ok("users", result.id, result.response);
+                    if (!validation.IsValid)
+                    {
+                        return Results.BadRequest(
+                            ValidationErrorMapper.ToJsonApiErrors(validation)
+                        );
+                    }
+
+                    var result = await handler.Handle(id, request);
+
+                    if (!result.IsSuccess)
+                        return Results.Problem(statusCode: 500, title: result.Errors.First().Title);
+
+                    return JsonApiResults.Ok("users", result.Value.id, result.Value.response);
                 }
             )
             .WithName("UpdateUser")
