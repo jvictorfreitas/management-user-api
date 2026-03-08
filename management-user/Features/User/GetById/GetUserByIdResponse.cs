@@ -1,3 +1,3 @@
 namespace feature.user;
 
-public record GetUserByIdResponse(string Name, string Email);
+public record GetUserByIdResponse(string Name, string Cpf);

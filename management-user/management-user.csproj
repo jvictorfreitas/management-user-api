@@ -20,7 +20,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Domain\" />
-    <Folder Include="Features\" />
-    <Folder Include="Shared\" />
   </ItemGroup>
 </Project>

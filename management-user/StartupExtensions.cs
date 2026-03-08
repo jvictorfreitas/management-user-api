@@ -1,4 +1,6 @@
 ﻿using feature.user;
+using Infraestructure.database;
+using Shared;
 
 namespace management.user;
 
@@ -19,6 +21,7 @@ public static class StartupExtensions
         IConfiguration configuration
     )
     {
+        services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }
 

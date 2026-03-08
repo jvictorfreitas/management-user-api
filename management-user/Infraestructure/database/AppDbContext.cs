@@ -1,33 +1,33 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using infrastructure.entities;
 
-namespace infrastructure.database;
+namespace Infraestructure.database;
 
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
-    public DbSet<User> Users => Set<User>();
+    public DbSet<UserEntity> Users => Set<UserEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>(entity =>
+        modelBuilder.Entity<UserEntity>(entity =>
         {
             entity.ToTable("users");
 
             entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
 
-            entity.Property(x => x.Name)
-                .IsRequired();
+            entity.Property(x => x.GuidId).IsRequired();
+            entity.HasIndex(x => x.GuidId);
 
-            entity.Property(x => x.Email)
-                .IsRequired();
+            entity.Property(x => x.Name).IsRequired();
 
-            entity.Property(x => x.CreatedAt)
-                .HasColumnName("created_at");
+            entity.Property(x => x.Cpf).IsRequired();
+
+            entity.Property(x => x.AccountStatus).IsRequired();
+
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
         });
     }
 }

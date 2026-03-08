@@ -1,22 +1,25 @@
-using infrastructure.database;
+using domain;
+using Shared;
 
 namespace feature.user;
 
 public class CreateUserHandler
 {
-    private readonly AppDbContext _db;
-    public CreateUserHandler(AppDbContext db)
+    private readonly IUserRepository _userRepository;
+
+    public CreateUserHandler(IUserRepository userRepository)
     {
-        _db = db;
+        _userRepository = userRepository;
     }
+
     public async Task<(string id, CreateUserResponse response)> Handle(CreateUserRequest request)
     {
-        var id = Guid.NewGuid();
+        User user = new User(Guid.NewGuid(), request.Name, request.Cpf, AccountStatus.Active);
 
-        CreateUserResponse response = new CreateUserResponse(request.Name, request.Email);
+        user = await _userRepository.Add(user);
 
-        await Task.Delay(100);
+        CreateUserResponse response = new CreateUserResponse(request.Name, request.Cpf);
 
-        return (id.ToString(), response);
+        return (user.Id.ToString(), response);
     }
 }

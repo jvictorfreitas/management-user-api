@@ -1,3 +1,3 @@
 namespace feature.user;
 
-public record UpdateUserResponse(string Name, string Email);
+public record UpdateUserResponse(string Name, string Cpf);
