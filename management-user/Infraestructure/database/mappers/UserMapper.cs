@@ -17,12 +17,11 @@ public static class UserMapper
 
     public static User ToDomain(UserEntity entity)
     {
-        return new User
-        {
-            Id = entity.GuidId,
-            Name = entity.Name,
-            Cpf = entity.Cpf,
-            AccountStatus = (AccountStatus)entity.AccountStatus,
-        };
+        return new User(
+            entity.GuidId,
+            entity.Name,
+            entity.Cpf,
+            (AccountStatus)entity.AccountStatus
+        );
     }
 }
