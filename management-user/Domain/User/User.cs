@@ -16,11 +16,4 @@ public class User
         Cpf = cpf;
         AccountStatus = accountStatus;
     }
-
-    public User(Guid id, string name, string cpf)
-    {
-        Id = id;
-        Name = name;
-        Cpf = cpf;
-    }
 }
