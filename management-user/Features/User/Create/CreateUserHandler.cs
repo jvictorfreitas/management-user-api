@@ -45,7 +45,12 @@ public class CreateUserHandler
 
             await transaction.CommitAsync();
 
-            CreateUserResponse response = new CreateUserResponse(user.Name, user.Cpf);
+            CreateUserResponse response = new CreateUserResponse(
+                user.Name,
+                user.Cpf,
+                (short)user.AccountStatus,
+                user.AccountStatus.ToString()
+            );
 
             return Result<(string, CreateUserResponse)>.Success((user.Id.ToString(), response));
         }

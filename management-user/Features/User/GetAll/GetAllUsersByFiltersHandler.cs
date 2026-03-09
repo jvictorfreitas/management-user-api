@@ -57,7 +57,15 @@ public class GetAllUsersByFiltersHandler
         foreach (User user in users)
         {
             response.Add(
-                (user.Id.ToString(), new GetAllUsersByFiltersResponse(user.Name, user.Cpf))
+                (
+                    user.Id.ToString(),
+                    new GetAllUsersByFiltersResponse(
+                        user.Name,
+                        user.Cpf,
+                        (short)user.AccountStatus,
+                        user.AccountStatus.ToString()
+                    )
+                )
             );
         }
 
