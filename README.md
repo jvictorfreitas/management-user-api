@@ -1,6 +1,6 @@
 # Management User API
 
-A RESTful API for user management built with ASP.NET Core 9, following clean architecture principles with vertical slice organization. Supports user CRUD operations, JWT authentication, Redis caching, RabbitMQ event publishing, and an Outbox pattern for reliable messaging.
+A RESTful API for user management built with ASP.NET Core 9, following clean architecture principles with vertical slice organization. Supports user CRUD operations, Redis caching, RabbitMQ event publishing, and an Outbox pattern for reliable messaging.
 
 ## Architecture
 
@@ -16,7 +16,6 @@ management-user/
 │       ├── Delete/               # DELETE /v1/users/{id}
 │       ├── GetAll/               # GET /v1/users
 │       ├── GetById/              # GET /users/{id}
-│       ├── Login/                # POST /v1/auth/login
 │       └── Update/               # PUT /v1/users/{id}
 ├── Infrastructure/
 │   ├── cache/                    # Redis cache service
@@ -28,7 +27,6 @@ management-user/
     ├── JsonApi/                  # JSON:API response helpers and middleware
     ├── OutBox/                   # OutboxService
     ├── Result/                   # Result<T> monad
-    ├── Security/                 # PasswordHasher (PBKDF2)
     └── Validation/               # IValidator, ValidationResult, ValidationError
 ```
 
@@ -47,7 +45,6 @@ Each feature follows the same pattern:
 | Database          | PostgreSQL via EF Core 9 (Npgsql)   |
 | Cache             | Redis (StackExchange)               |
 | Message Broker    | RabbitMQ                            |
-| Auth              | JWT Bearer tokens                   |
 | API Docs          | NSwag (Swagger UI at `/docs`)       |
 | Password Hashing  | PBKDF2-SHA256 (built-in .NET)       |
 | Outbox Pattern    | Custom background workers           |
@@ -84,17 +81,9 @@ docker run -d -p 5672:5672 rabbitmq:3
     "HostName": "localhost",
     "UserName": "guest",
     "Password": "guest"
-  },
-  "Jwt": {
-    "Secret": "your-super-secret-key-that-is-at-least-32-characters-long",
-    "Issuer": "management-user-api",
-    "Audience": "management-user-api-clients",
-    "ExpirationMinutes": 60
   }
 }
 ```
-
-> **Important:** Replace `Jwt:Secret` with a strong random key in production. Never commit secrets to source control.
 
 ## Running the API
 
@@ -111,29 +100,6 @@ API is available at `https://localhost:7xxx` (port shown in console output).
 Swagger UI: `https://localhost:7xxx/docs`
 
 ## API Endpoints
-
-### Authentication
-
-#### POST /v1/auth/login
-Authenticate a user and receive a JWT token.
-
-**Request:**
-```json
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
-```
-
-**Response (200):**
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresAt": "2026-03-09T13:00:00Z"
-}
-```
-
----
 
 ### Users
 
@@ -243,7 +209,6 @@ The test suite covers:
 | Handlers   | CreateUser, GetUserById, GetAllUsers, Login             |
 | Validators | CreateUser, UpdateUser, Login                          |
 | Mapper     | UserMapper (ToEntity, ToDomain, round-trip)             |
-| Security   | PasswordHasher (hash, verify, tamper detection)         |
 
 ## Project Structure
 
