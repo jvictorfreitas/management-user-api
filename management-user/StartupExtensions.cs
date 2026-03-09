@@ -1,4 +1,5 @@
 ﻿using feature.user;
+using Infrastructure.cache;
 using Infrastructure.database;
 using Shared;
 
@@ -18,6 +19,7 @@ public static class StartupExtensions
 
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
+        services.AddScoped<ICacheService, RedisCacheService>();
         services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }

@@ -7,6 +7,8 @@ public class User
     public string Cpf { get; set; } = string.Empty;
     public AccountStatus AccountStatus { get; set; }
 
+    public User() { }
+
     public User(Guid id, string name, string cpf, AccountStatus accountStatus)
     {
         Id = id;

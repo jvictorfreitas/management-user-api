@@ -6,10 +6,15 @@ namespace feature.user;
 public class GetAllUsersByFiltersHandler
 {
     private readonly IUserRepository _userRepository;
+    private readonly ILogger<GetAllUsersByFiltersHandler> _logger;
 
-    public GetAllUsersByFiltersHandler(IUserRepository userRepository)
+    public GetAllUsersByFiltersHandler(
+        IUserRepository userRepository,
+        ILogger<GetAllUsersByFiltersHandler> logger
+    )
     {
         _userRepository = userRepository;
+        _logger = logger;
     }
 
     public async Task<
@@ -29,8 +34,10 @@ public class GetAllUsersByFiltersHandler
                 IEnumerable<(string id, GetAllUsersByFiltersResponse attributes)>
             >.Success(ToResponseList(users));
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError("GetAllUsersByFiltersHandler-ERROR: " + ex.Message);
+
             return Result<IEnumerable<(string, GetAllUsersByFiltersResponse)>>.Failure([
                 new JsonApiError
                 {
