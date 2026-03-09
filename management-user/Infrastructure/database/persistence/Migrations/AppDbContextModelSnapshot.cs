@@ -44,7 +44,7 @@ namespace management_user.Infrastructure.database.persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OutboxMessages");
+                    b.ToTable("OutboxMessages", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.database.UserEntity", b =>
