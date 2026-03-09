@@ -34,9 +34,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    environment:
-      - Redis__Configuration=redis:6379
-      - Redis__InstanceName=api_cache
     networks:
       - app-network
 
@@ -47,10 +44,6 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    environment:
-      - RabbitMQ__HostName=rabbitmq
-      - RabbitMQ__UserName=guest
-      - RabbitMQ__Password=guest
     healthcheck:
       test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
       interval: 5s
@@ -75,6 +68,11 @@ services:
     environment:
       ConnectionStrings__Default: Host=postgres;Port=5432;Database=appdb;Username=app;Password=app
       ASPNETCORE_ENVIRONMENT: Development
+      Redis__Configuration: redis:6379
+      Redis__InstanceName: api_cache
+      RabbitMQ__HostName: rabbitmq
+      RabbitMQ__UserName: guest
+      RabbitMQ__Password: guest
     ports:
       - "8080:8080"
     networks:
