@@ -33,7 +33,7 @@ public static class StartupExtensions
         {
             var factory = new ConnectionFactory
             {
-                HostName = "rabbitmq",
+                HostName = "localhost", //"rabbitmq",
                 UserName = "guest",
                 Password = "guest",
             };
@@ -51,7 +51,7 @@ public static class StartupExtensions
 
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = "redis:6379";
+            options.Configuration = "localhost:6379"; //"redis:6379";
             options.InstanceName = "api_cache";
         });
         return services;

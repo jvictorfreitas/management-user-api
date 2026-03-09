@@ -36,7 +36,12 @@ public class UpdateUserHandler
 
         try
         {
-            User user = new User(id, request.Name, request.Cpf);
+            User user = new User(
+                id,
+                request.Name,
+                request.Cpf,
+                (AccountStatus)request.accountStatus
+            );
 
             user = await _userRepository.Update(user);
 
@@ -46,7 +51,12 @@ public class UpdateUserHandler
 
             await transaction.CommitAsync();
 
-            UpdateUserResponse response = new(user.Name, user.Cpf);
+            UpdateUserResponse response = new(
+                user.Name,
+                user.Cpf,
+                (short)user.AccountStatus,
+                user.AccountStatus.ToString()
+            );
 
             return Result<(string id, UpdateUserResponse response)>.Success(
                 (user.Id.ToString(), response)

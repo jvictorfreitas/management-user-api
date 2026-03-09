@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using domain;
+using Shared;
 
 namespace feature.user;
 
@@ -16,6 +17,9 @@ public class UpdateUserValidator : IValidator<UpdateUserRequest>
 
         if (request.Cpf?.Length != 11)
             result.Add("cpf", "Cpf must contain 11 digits");
+
+        if (!Enum.IsDefined(typeof(AccountStatus), request.accountStatus))
+            result.Add("accountStatus", "accountStatus invalid value");
 
         return result;
     }

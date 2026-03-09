@@ -84,8 +84,7 @@ public class UserRepository : IUserRepository
         if (entity == null)
             throw new KeyNotFoundException($"User {user.Id} not found");
 
-        entity.Name = user.Name;
-        entity.Cpf = user.Cpf;
+        entity = UserMapper.ToEntity(user);
 
         await _appDbContext.SaveChangesAsync();
 

@@ -1,6 +1,6 @@
 namespace domain;
 
-public enum AccountStatus
+public enum AccountStatus : short
 {
     Active = 0,
     Inactive = 1,

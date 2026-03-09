@@ -6,13 +6,13 @@ public static class UpdateUserEndpoint
 {
     public static void MapUpdateUserEndpoint(this WebApplication app)
     {
-        app.MapPatch(
+        app.MapPut(
                 "/v1/users/{id:guid}",
                 async (
                     UpdateUserHandler handler,
                     UpdateUserValidator validator,
-                    Guid id,
-                    UpdateUserRequest request
+                    UpdateUserRequest request,
+                    Guid id
                 ) =>
                 {
                     ValidationResult validation = validator.Validate(request);
