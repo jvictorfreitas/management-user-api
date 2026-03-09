@@ -12,6 +12,7 @@ public static class UserMapper
             Name = user.Name,
             Cpf = user.Cpf,
             AccountStatus = (short)user.AccountStatus,
+            CreatedAt = DateTime.UtcNow,
         };
     }
 

@@ -14,6 +14,8 @@ builder.Services.AddHandlers();
 
 builder.Services.AddInfrastructureServices();
 
+builder.Services.AddQueue();
+
 builder.Services.AddOpenApiDocument(options =>
 {
     options.Title = "Management User API";
@@ -24,12 +26,6 @@ builder.Services.AddOpenApiDocument(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"))
 );
-
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = "redis:6379";
-    options.InstanceName = "api_cache";
-});
 
 builder.Services.ConfigureValidations();
 
