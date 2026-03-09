@@ -33,7 +33,15 @@ public class GetUserByIdHandler
             }
 
             return Result<(string, GetUserByIdResponse)>.Success(
-                (user.Id.ToString(), new GetUserByIdResponse(user.Name, user.Cpf))
+                (
+                    user.Id.ToString(),
+                    new GetUserByIdResponse(
+                        user.Name,
+                        user.Cpf,
+                        (short)user.AccountStatus,
+                        user.AccountStatus.ToString()
+                    )
+                )
             );
         }
         catch (Exception ex)
