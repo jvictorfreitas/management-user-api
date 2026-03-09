@@ -21,7 +21,10 @@ public static class StartupExtensions
         return services;
     }
 
-    public static IServiceCollection AddQueue(this IServiceCollection services)
+    public static IServiceCollection AddQueue(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
         services.AddScoped<OutboxService>();
         services.AddSingleton<RabbitMqPublisher>();
@@ -33,9 +36,9 @@ public static class StartupExtensions
         {
             var factory = new ConnectionFactory
             {
-                HostName = "localhost", //"rabbitmq",
-                UserName = "guest",
-                Password = "guest",
+                HostName = configuration["Rabbitmq:HostName"]!,
+                UserName = configuration["Rabbitmq:UserName"]!,
+                Password = configuration["Rabbitmq:Password"]!,
             };
 
             return factory.CreateConnectionAsync().GetAwaiter().GetResult();
@@ -44,15 +47,18 @@ public static class StartupExtensions
         return services;
     }
 
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructureServices(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
         services.AddScoped<ICacheService, RedisCacheService>();
         services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = "localhost:6379"; //"redis:6379";
-            options.InstanceName = "api_cache";
+            options.Configuration = configuration["Redis:Configuration"];
+            options.InstanceName = configuration["Redis:InstanceName"];
         });
         return services;
     }

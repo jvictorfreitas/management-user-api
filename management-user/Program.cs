@@ -12,9 +12,9 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddHandlers();
 
-builder.Services.AddInfrastructureServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
-builder.Services.AddQueue();
+builder.Services.AddQueue(builder.Configuration);
 
 builder.Services.AddOpenApiDocument(options =>
 {
