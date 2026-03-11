@@ -1,5 +1,4 @@
 using domain;
-using Infrastructure.database;
 using Shared;
 
 namespace feature.user;

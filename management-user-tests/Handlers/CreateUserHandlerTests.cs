@@ -33,9 +33,7 @@ public class CreateUserHandlerTests
         var request = new CreateUserRequest("John Doe", "12345678901");
         var createdUser = new User(Guid.NewGuid(), request.Name, request.Cpf, AccountStatus.Active);
 
-        userRepositoryMock
-            .Setup(r => r.Add(It.IsAny<User>()))
-            .ReturnsAsync(createdUser);
+        userRepositoryMock.Setup(r => r.Add(It.IsAny<User>())).ReturnsAsync(createdUser);
 
         cacheServiceMock
             .Setup(c => c.SetAsync(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<TimeSpan?>()))

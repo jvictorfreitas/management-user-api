@@ -15,11 +15,17 @@ public class UserRepository : IUserRepository
 
     public async Task<User> Add(User user)
     {
-        UserEntity? entity = UserMapper.ToEntity(user);
+        UserEntity? entity = new(
+            user.Id,
+            user.Name,
+            user.Cpf,
+            (short)user.AccountStatus,
+            DateTime.UtcNow
+        );
 
         _appDbContext.Users.Add(entity);
 
-        return UserMapper.ToDomain(entity);
+        return entity.ToDomain();
     }
 
     public async Task<bool> Delete(Guid id)
@@ -56,7 +62,7 @@ public class UserRepository : IUserRepository
             .Take(pageSize)
             .ToListAsync();
 
-        return entities.Select(UserMapper.ToDomain).ToList();
+        return entities.Select(entity => entity.ToDomain()).ToList();
     }
 
     public async Task<User> GetById(Guid id)
@@ -68,7 +74,7 @@ public class UserRepository : IUserRepository
         if (entity == null)
             throw new KeyNotFoundException($"User {id} not found");
 
-        return UserMapper.ToDomain(entity);
+        return entity.ToDomain();
     }
 
     public async Task<User> Update(User user)
@@ -80,8 +86,8 @@ public class UserRepository : IUserRepository
         if (entity == null)
             throw new KeyNotFoundException($"User {user.Id} not found");
 
-        entity = UserMapper.ToEntity(user);
+        entity.SetValuesForUpdateFromDomain(user);
 
-        return UserMapper.ToDomain(entity);
+        return entity.ToDomain();
     }
 }

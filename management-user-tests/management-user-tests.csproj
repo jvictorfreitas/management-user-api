@@ -26,4 +26,8 @@
     <ProjectReference Include="..\management-user\management-user.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
 </Project>
