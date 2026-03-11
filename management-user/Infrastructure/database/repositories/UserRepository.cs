@@ -19,8 +19,6 @@ public class UserRepository : IUserRepository
 
         _appDbContext.Users.Add(entity);
 
-        await _appDbContext.SaveChangesAsync();
-
         return UserMapper.ToDomain(entity);
     }
 
@@ -32,8 +30,6 @@ public class UserRepository : IUserRepository
             return false;
 
         _appDbContext.Users.Remove(entity);
-
-        await _appDbContext.SaveChangesAsync();
 
         return true;
     }
@@ -85,8 +81,6 @@ public class UserRepository : IUserRepository
             throw new KeyNotFoundException($"User {user.Id} not found");
 
         entity = UserMapper.ToEntity(user);
-
-        await _appDbContext.SaveChangesAsync();
 
         return UserMapper.ToDomain(entity);
     }

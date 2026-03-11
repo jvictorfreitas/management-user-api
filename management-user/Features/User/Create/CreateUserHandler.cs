@@ -10,28 +10,28 @@ public class CreateUserHandler
     private readonly ILogger<CreateUserHandler> _logger;
     private readonly ICacheService _cacheService;
     private readonly OutboxService _outboxService;
-    private readonly AppDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreateUserHandler(
         IUserRepository userRepository,
         ILogger<CreateUserHandler> logger,
         ICacheService cacheService,
         OutboxService outboxService,
-        AppDbContext context
+        IUnitOfWork unitOfWork
     )
     {
         _userRepository = userRepository;
         _logger = logger;
         _cacheService = cacheService;
         _outboxService = outboxService;
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<(string id, CreateUserResponse response)>> Handle(
         CreateUserRequest request
     )
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        await _unitOfWork.BeginTransactionAsync();
 
         try
         {
@@ -43,7 +43,7 @@ public class CreateUserHandler
 
             await _outboxService.AddMessageAsync("user.created", user);
 
-            await transaction.CommitAsync();
+            await _unitOfWork.CommitAsync();
 
             CreateUserResponse response = new CreateUserResponse(
                 user.Name,
@@ -56,7 +56,7 @@ public class CreateUserHandler
         }
         catch (Exception ex)
         {
-            await transaction.RollbackAsync();
+            await _unitOfWork.RollbackAsync();
 
             _logger.LogError("CreateUserHandler-ERROR: " + ex.Message);
 

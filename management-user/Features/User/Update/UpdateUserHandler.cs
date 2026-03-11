@@ -10,21 +10,21 @@ public class UpdateUserHandler
     private readonly ILogger<UpdateUserHandler> _logger;
     private readonly ICacheService _cacheService;
     private readonly OutboxService _outboxService;
-    private readonly AppDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
     public UpdateUserHandler(
         IUserRepository userRepository,
         ILogger<UpdateUserHandler> logger,
         ICacheService cacheService,
         OutboxService outboxService,
-        AppDbContext context
+        IUnitOfWork unitOfWork
     )
     {
         _userRepository = userRepository;
         _logger = logger;
         _cacheService = cacheService;
         _outboxService = outboxService;
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<(string id, UpdateUserResponse response)>> Handle(
@@ -32,7 +32,7 @@ public class UpdateUserHandler
         UpdateUserRequest request
     )
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        await _unitOfWork.BeginTransactionAsync();
 
         try
         {
@@ -49,7 +49,7 @@ public class UpdateUserHandler
 
             await _outboxService.AddMessageAsync("user.updated", user);
 
-            await transaction.CommitAsync();
+            await _unitOfWork.CommitAsync();
 
             UpdateUserResponse response = new(
                 user.Name,
@@ -64,7 +64,7 @@ public class UpdateUserHandler
         }
         catch (Exception ex)
         {
-            await transaction.RollbackAsync();
+            await _unitOfWork.RollbackAsync();
 
             _logger.LogError("UpdateUserHandler-ERROR: " + ex.Message);
 

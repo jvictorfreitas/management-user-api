@@ -1,4 +1,4 @@
-﻿using Shared;
+﻿namespace Shared;
 
 public interface ICacheService
 {

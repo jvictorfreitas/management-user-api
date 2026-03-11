@@ -53,13 +53,16 @@ public static class StartupExtensions
     )
     {
         services.AddScoped<ICacheService, RedisCacheService>();
-        services.AddScoped<IUserRepository, UserRepository>();
-
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration["Redis:Configuration"];
             options.InstanceName = configuration["Redis:InstanceName"];
         });
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddScoped<IUserRepository, UserRepository>();
+
         return services;
     }
 
