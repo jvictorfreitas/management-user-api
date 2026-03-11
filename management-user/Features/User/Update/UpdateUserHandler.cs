@@ -28,10 +28,11 @@ public class UpdateUserHandler
 
     public async Task<Result<(string id, UpdateUserResponse response)>> Handle(
         Guid id,
-        UpdateUserRequest request
+        UpdateUserRequest request,
+        CancellationToken cancellationToken
     )
     {
-        await _unitOfWork.BeginTransactionAsync();
+        await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
@@ -42,13 +43,13 @@ public class UpdateUserHandler
                 (AccountStatus)request.accountStatus
             );
 
-            user = await _userRepository.Update(user);
+            user = await _userRepository.Update(user, cancellationToken);
 
             await _cacheService.SetAsync(user.Id.ToString(), user, TimeSpan.FromMinutes(30));
 
             await _outboxService.AddMessageAsync("user.updated", user);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync(cancellationToken);
 
             UpdateUserResponse response = new(
                 user.Name,

@@ -25,20 +25,20 @@ public class DeleteUserHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<bool>> Handle(Guid id)
+    public async Task<Result<bool>> Handle(Guid id, CancellationToken cancellationToken)
     {
-        await _unitOfWork.BeginTransactionAsync();
+        await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            bool result = await _userRepository.Delete(id);
+            bool result = await _userRepository.Delete(id, cancellationToken);
 
             if (result)
                 await _cacheService.RemoveAsync(id.ToString());
 
             await _outboxService.AddMessageAsync("user.deleted", id);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync(cancellationToken);
 
             return Result<bool>.Success(result);
         }

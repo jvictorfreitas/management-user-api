@@ -13,7 +13,7 @@ public class UserRepository : IUserRepository
         _appDbContext = appDbContext;
     }
 
-    public async Task<User> Add(User user)
+    public async Task<User> Add(User user, CancellationToken cancellationToken)
     {
         UserEntity? entity = new(
             user.Id,
@@ -23,24 +23,33 @@ public class UserRepository : IUserRepository
             DateTime.UtcNow
         );
 
-        _appDbContext.Users.Add(entity);
+        await _appDbContext.Users.AddAsync(entity, cancellationToken);
 
         return entity.ToDomain();
     }
 
-    public async Task<bool> Delete(Guid id)
+    public async Task<bool> Delete(Guid id, CancellationToken cancellationToken)
     {
-        UserEntity? entity = await _appDbContext.Users.FirstOrDefaultAsync(x => x.GuidId == id);
+        UserEntity? entity = await _appDbContext.Users.FirstOrDefaultAsync(
+            x => x.GuidId == id,
+            cancellationToken
+        );
 
         if (entity == null)
             return false;
 
-        _appDbContext.Users.Remove(entity);
+        await _appDbContext.Users.AddAsync(entity, cancellationToken);
 
         return true;
     }
 
-    public async Task<List<User>> GetAllByFilter(string? name, string? cpf, int page, int pageSize)
+    public async Task<List<User>> GetAllByFilter(
+        string? name,
+        string? cpf,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken
+    )
     {
         IQueryable<UserEntity> query = _appDbContext.Users.AsNoTracking().AsQueryable();
 
@@ -60,16 +69,16 @@ public class UserRepository : IUserRepository
             .OrderBy(x => x.Name)
             .Skip(skip)
             .Take(pageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return entities.Select(entity => entity.ToDomain()).ToList();
     }
 
-    public async Task<User> GetById(Guid id)
+    public async Task<User> GetById(Guid id, CancellationToken cancellationToken)
     {
         UserEntity? entity = await _appDbContext
             .Users.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.GuidId == id);
+            .FirstOrDefaultAsync(x => x.GuidId == id, cancellationToken);
 
         if (entity == null)
             throw new KeyNotFoundException($"User {id} not found");
@@ -77,10 +86,11 @@ public class UserRepository : IUserRepository
         return entity.ToDomain();
     }
 
-    public async Task<User> Update(User user)
+    public async Task<User> Update(User user, CancellationToken cancellationToken)
     {
-        UserEntity? entity = await _appDbContext.Users.FirstOrDefaultAsync(x =>
-            x.GuidId == user.Id
+        UserEntity? entity = await _appDbContext.Users.FirstOrDefaultAsync(
+            x => x.GuidId == user.Id,
+            cancellationToken
         );
 
         if (entity == null)

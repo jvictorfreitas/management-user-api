@@ -10,10 +10,11 @@ public static class GetAllUsersByFiltersEndPoint
                 "/v1/users",
                 async (
                     [AsParameters] GetAllUsersByFiltersRequest request,
-                    GetAllUsersByFiltersHandler handler
+                    GetAllUsersByFiltersHandler handler,
+                    CancellationToken cancellationToken
                 ) =>
                 {
-                    var result = await handler.Handle(request);
+                    var result = await handler.Handle(request, cancellationToken);
 
                     if (!result.IsSuccess)
                         return Results.Problem(statusCode: 500, title: result.Errors.First().Title);

@@ -19,7 +19,7 @@ public class GetAllUsersByFiltersHandler
 
     public async Task<
         Result<IEnumerable<(string id, GetAllUsersByFiltersResponse attributes)>>
-    > Handle(GetAllUsersByFiltersRequest request)
+    > Handle(GetAllUsersByFiltersRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -27,7 +27,8 @@ public class GetAllUsersByFiltersHandler
                 request.Name,
                 request.Cpf,
                 request.Page,
-                request.PageSize
+                request.PageSize,
+                cancellationToken
             );
 
             return Result<

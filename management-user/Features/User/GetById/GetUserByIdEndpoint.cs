@@ -9,9 +9,13 @@ public static class GetUserByIdEndpoint
     {
         app.MapGet(
                 "/users/{id}",
-                async (GetUserByIdHandler handler, [FromRoute] Guid id) =>
+                async (
+                    GetUserByIdHandler handler,
+                    [FromRoute] Guid id,
+                    CancellationToken cancellationToken
+                ) =>
                 {
-                    var result = await handler.Handle(id);
+                    var result = await handler.Handle(id, cancellationToken);
 
                     if (!result.IsSuccess)
                         return Results.Problem(statusCode: 500, title: result.Errors.First().Title);

@@ -8,9 +8,9 @@ public static class DeleteUserEndpoint
     {
         app.MapDelete(
                 "/v1/users/{id}",
-                async (DeleteUserHandler handler, Guid id) =>
+                async (DeleteUserHandler handler, Guid id, CancellationToken cancellationToken) =>
                 {
-                    Result<bool> result = await handler.Handle(id);
+                    Result<bool> result = await handler.Handle(id, cancellationToken);
 
                     if (!result.IsSuccess)
                         return Results.Problem(statusCode: 500, title: result.Errors.First().Title);

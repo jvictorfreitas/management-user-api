@@ -20,7 +20,10 @@ public class GetUserByIdHandler
         _cacheService = cacheService;
     }
 
-    public async Task<Result<(string id, GetUserByIdResponse response)>> Handle(Guid id)
+    public async Task<Result<(string id, GetUserByIdResponse response)>> Handle(
+        Guid id,
+        CancellationToken cancellationToken
+    )
     {
         try
         {
@@ -28,7 +31,7 @@ public class GetUserByIdHandler
 
             if (user == null)
             {
-                user = user = await _userRepository.GetById(id);
+                user = user = await _userRepository.GetById(id, cancellationToken);
                 await _cacheService.SetAsync(id.ToString(), user, TimeSpan.FromMinutes(30));
             }
 

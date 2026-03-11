@@ -12,7 +12,8 @@ public static class UpdateUserEndpoint
                     UpdateUserHandler handler,
                     UpdateUserValidator validator,
                     UpdateUserRequest request,
-                    Guid id
+                    Guid id,
+                    CancellationToken cancellationToken
                 ) =>
                 {
                     ValidationResult validation = validator.Validate(request);
@@ -24,7 +25,7 @@ public static class UpdateUserEndpoint
                         );
                     }
 
-                    var result = await handler.Handle(id, request);
+                    var result = await handler.Handle(id, request, cancellationToken);
 
                     if (!result.IsSuccess)
                         return Results.Problem(statusCode: 500, title: result.Errors.First().Title);

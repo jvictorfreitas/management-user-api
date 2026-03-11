@@ -27,22 +27,23 @@ public class CreateUserHandler
     }
 
     public async Task<Result<(string id, CreateUserResponse response)>> Handle(
-        CreateUserRequest request
+        CreateUserRequest request,
+        CancellationToken cancellationToken
     )
     {
-        await _unitOfWork.BeginTransactionAsync();
+        await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
             User user = new User(Guid.NewGuid(), request.Name, request.Cpf, AccountStatus.Active);
 
-            user = await _userRepository.Add(user);
+            user = await _userRepository.Add(user, cancellationToken);
 
             await _cacheService.SetAsync(user.Id.ToString(), user, TimeSpan.FromMinutes(30));
 
             await _outboxService.AddMessageAsync("user.created", user);
 
-            await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync(cancellationToken);
 
             CreateUserResponse response = new CreateUserResponse(
                 user.Name,

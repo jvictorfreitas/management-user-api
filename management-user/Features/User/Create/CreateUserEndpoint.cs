@@ -11,7 +11,8 @@ public static class CreateUserEndpoint
                 async (
                     CreateUserHandler handler,
                     CreateUserValidator validator,
-                    CreateUserRequest request
+                    CreateUserRequest request,
+                    CancellationToken cancellationToken
                 ) =>
                 {
                     ValidationResult validation = validator.Validate(request);
@@ -23,7 +24,7 @@ public static class CreateUserEndpoint
                         );
                     }
 
-                    var result = await handler.Handle(request);
+                    var result = await handler.Handle(request, cancellationToken);
 
                     if (!result.IsSuccess)
                         return Results.Problem(statusCode: 500, title: result.Errors.First().Title);

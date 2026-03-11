@@ -13,17 +13,17 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
     }
 
-    public async Task BeginTransactionAsync()
+    public async Task BeginTransactionAsync(CancellationToken cancellationToken)
     {
-        _transaction = await _context.Database.BeginTransactionAsync();
+        _transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
     }
 
-    public async Task CommitAsync()
+    public async Task CommitAsync(CancellationToken cancellationToken)
     {
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
 
         if (_transaction != null)
-            await _transaction.CommitAsync();
+            await _transaction.CommitAsync(cancellationToken);
     }
 
     public async Task RollbackAsync()

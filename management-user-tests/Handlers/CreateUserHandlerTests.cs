@@ -29,11 +29,15 @@ public class CreateUserHandlerTests
         var cacheServiceMock = new Mock<ICacheService>();
         var dbContext = CreateInMemoryDbContext();
         var outboxService = new OutboxService(dbContext);
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var cancelationToken = It.IsAny<CancellationToken>();
 
         var request = new CreateUserRequest("John Doe", "12345678901");
         var createdUser = new User(Guid.NewGuid(), request.Name, request.Cpf, AccountStatus.Active);
 
-        userRepositoryMock.Setup(r => r.Add(It.IsAny<User>())).ReturnsAsync(createdUser);
+        userRepositoryMock
+            .Setup(r => r.Add(It.IsAny<User>(), cancelationToken))
+            .ReturnsAsync(createdUser);
 
         cacheServiceMock
             .Setup(c => c.SetAsync(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<TimeSpan?>()))
@@ -44,11 +48,11 @@ public class CreateUserHandlerTests
             loggerMock.Object,
             cacheServiceMock.Object,
             outboxService,
-            dbContext
+            unitOfWork.Object
         );
 
         // Act
-        var result = await handler.Handle(request);
+        var result = await handler.Handle(request, cancelationToken);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -65,9 +69,11 @@ public class CreateUserHandlerTests
         var cacheServiceMock = new Mock<ICacheService>();
         var dbContext = CreateInMemoryDbContext();
         var outboxService = new OutboxService(dbContext);
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var cancelationToken = It.IsAny<CancellationToken>();
 
         userRepositoryMock
-            .Setup(r => r.Add(It.IsAny<User>()))
+            .Setup(r => r.Add(It.IsAny<User>(), cancelationToken))
             .ThrowsAsync(new Exception("DB error"));
 
         var handler = new CreateUserHandler(
@@ -75,13 +81,13 @@ public class CreateUserHandlerTests
             loggerMock.Object,
             cacheServiceMock.Object,
             outboxService,
-            dbContext
+            unitOfWork.Object
         );
 
         var request = new CreateUserRequest("John Doe", "12345678901");
 
         // Act
-        var result = await handler.Handle(request);
+        var result = await handler.Handle(request, cancelationToken);
 
         // Assert
         Assert.False(result.IsSuccess);

@@ -29,69 +29,67 @@ public class GetUserByIdHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnUserFromCache_WhenCacheHit()
     {
+        var cancelationToken = It.IsAny<CancellationToken>();
+
         // Arrange
         var userId = Guid.NewGuid();
         var user = new User(userId, "John Doe", "12345678901", AccountStatus.Active);
 
-        _cacheServiceMock
-            .Setup(c => c.GetAsync<User>(userId.ToString()))
-            .ReturnsAsync(user);
+        _cacheServiceMock.Setup(c => c.GetAsync<User>(userId.ToString())).ReturnsAsync(user);
 
         // Act
-        var result = await _handler.Handle(userId);
+        var result = await _handler.Handle(userId, cancelationToken);
 
         // Assert
         Assert.True(result.IsSuccess);
         Assert.Equal(userId.ToString(), result.Value.id);
         Assert.Equal("John Doe", result.Value.response.Name);
 
-        _userRepositoryMock.Verify(r => r.GetById(It.IsAny<Guid>()), Times.Never);
+        _userRepositoryMock.Verify(r => r.GetById(It.IsAny<Guid>(), cancelationToken), Times.Never);
     }
 
     [Fact]
     public async Task Handle_ShouldFetchFromRepository_WhenCacheMiss()
     {
+        var cancelationToken = It.IsAny<CancellationToken>();
+
         // Arrange
         var userId = Guid.NewGuid();
         var user = new User(userId, "Jane Doe", "12345678901", AccountStatus.Active);
 
-        _cacheServiceMock
-            .Setup(c => c.GetAsync<User>(userId.ToString()))
-            .ReturnsAsync((User?)null);
+        _cacheServiceMock.Setup(c => c.GetAsync<User>(userId.ToString())).ReturnsAsync((User?)null);
 
-        _userRepositoryMock
-            .Setup(r => r.GetById(userId))
-            .ReturnsAsync(user);
+        _userRepositoryMock.Setup(r => r.GetById(userId, cancelationToken)).ReturnsAsync(user);
 
         _cacheServiceMock
             .Setup(c => c.SetAsync(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<TimeSpan?>()))
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _handler.Handle(userId);
+        var result = await _handler.Handle(userId, cancelationToken);
 
         // Assert
         Assert.True(result.IsSuccess);
         Assert.Equal("Jane Doe", result.Value.response.Name);
-        _userRepositoryMock.Verify(r => r.GetById(userId), Times.Once);
+        _userRepositoryMock.Verify(r => r.GetById(userId, cancelationToken), Times.Once);
     }
 
     [Fact]
     public async Task Handle_ShouldReturnFailure_WhenRepositoryThrows()
     {
+        var cancelationToken = It.IsAny<CancellationToken>();
+
         // Arrange
         var userId = Guid.NewGuid();
 
-        _cacheServiceMock
-            .Setup(c => c.GetAsync<User>(userId.ToString()))
-            .ReturnsAsync((User?)null);
+        _cacheServiceMock.Setup(c => c.GetAsync<User>(userId.ToString())).ReturnsAsync((User?)null);
 
         _userRepositoryMock
-            .Setup(r => r.GetById(userId))
+            .Setup(r => r.GetById(userId, cancelationToken))
             .ThrowsAsync(new KeyNotFoundException("User not found"));
 
         // Act
-        var result = await _handler.Handle(userId);
+        var result = await _handler.Handle(userId, cancelationToken);
 
         // Assert
         Assert.False(result.IsSuccess);
