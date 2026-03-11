@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using queue.rabbit;
 
-namespace worker.outBox;
+namespace worker.outbox;
 
 public class OutboxProcessor : BackgroundService
 {

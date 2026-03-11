@@ -5,7 +5,6 @@ using queue.rabbit;
 using RabbitMQ.Client;
 using Shared;
 using worker.outbox;
-using worker.outBox;
 
 namespace management.user;
 
